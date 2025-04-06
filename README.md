@@ -30,5 +30,5 @@ A backend system for managing virtual events, built with Node.js and Express.js.
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/event-management-platform.git
+git clone https://github.com/mdfaizanali/event-management-platform.git  
 cd event-management-platform
