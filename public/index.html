@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Event Management Platform</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+    body {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem;
+    }
+    .container {
+      background-color: #ffffff;
+      padding: 2rem;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      width: 100%;
+      max-width: 500px;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 1.5rem;
+    }
+    input, button {
+      width: 100%;
+      padding: 0.75rem;
+      margin-bottom: 1rem;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+    }
+    input {
+      background-color: #f3f4f6;
+    }
+    button {
+      background-color: #667eea;
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #5a67d8;
+    }
+    .section {
+      margin-top: 2rem;
+    }
+    .success {
+      color: green;
+      font-size: 0.9rem;
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+    .error {
+      color: red;
+      font-size: 0.9rem;
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Event Manager</h1>
+
+    <div id="auth-section">
+      <input type="email" id="email" placeholder="Email">
+      <input type="password" id="password" placeholder="Password">
+      <input type="text" id="role" placeholder="Role (organizer/attendee)">
+      <button onclick="register()">Register</button>
+      <button onclick="login()">Login</button>
+      <div id="auth-msg"></div>
+    </div>
+
+    <div id="event-section" class="section" style="display:none">
+      <input type="text" id="title" placeholder="Event Title">
+      <input type="date" id="date">
+      <input type="time" id="time">
+      <input type="text" id="description" placeholder="Description">
+      <button onclick="createEvent()">Create Event</button>
+      <div id="event-msg"></div>
+    </div>
+  </div>
+
+  <script>
+    const apiUrl = 'https://your-deployed-backend.onrender.com/api';
+    let token = '';
+
+    async function register() {
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const role = document.getElementById('role').value;
+
+      const res = await fetch(`${apiUrl}/auth/register`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ email, password, role })
+      });
+
+      const data = await res.json();
+      document.getElementById('auth-msg').textContent = data.msg || 'Registered!';
+      document.getElementById('auth-msg').className = res.ok ? 'success' : 'error';
+    }
+
+    async function login() {
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+
+      const res = await fetch(`${apiUrl}/auth/login`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ email, password })
+      });
+
+      const data = await res.json();
+      if (data.token) {
+        token = data.token;
+        document.getElementById('auth-section').style.display = 'none';
+        document.getElementById('event-section').style.display = 'block';
+        document.getElementById('auth-msg').textContent = 'Login successful!';
+        document.getElementById('auth-msg').className = 'success';
+      } else {
+        document.getElementById('auth-msg').textContent = data.msg || 'Login failed';
+        document.getElementById('auth-msg').className = 'error';
+      }
+    }
+
+    async function createEvent() {
+      const title = document.getElementById('title').value;
+      const date = document.getElementById('date').value;
+      const time = document.getElementById('time').value;
+      const description = document.getElementById('description').value;
+
+      const res = await fetch(`${apiUrl}/events`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token
+        },
+        body: JSON.stringify({ title, date, time, description })
+      });
+
+      const data = await res.json();
+      document.getElementById('event-msg').textContent = data.msg || 'Event created!';
+      document.getElementById('event-msg').className = res.ok ? 'success' : 'error';
+    }
+  </script>
+</body>
+</html>

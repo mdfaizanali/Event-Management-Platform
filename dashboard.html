@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dashboard</title>
+</head>
+<body>
+  <h2>Welcome to Events</h2>
+
+  <h3>Create Event (Organizer)</h3>
+  <form id="createEventForm">
+    <input type="text" id="title" placeholder="Title" required><br>
+    <input type="date" id="date" required><br>
+    <input type="time" id="time" required><br>
+    <textarea id="description" placeholder="Description"></textarea><br>
+    <button type="submit">Create Event</button>
+  </form>
+
+  <h3>All Events</h3>
+  <div id="eventsContainer"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
